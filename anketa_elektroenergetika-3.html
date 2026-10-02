@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Анкета первокурсника — Электроэнергетика и электротехника</title>
+<style>
+:root{
+  --bg:#f4f7fb; --card:#fff; --text:#172033; --muted:#667085;
+  --line:#e4e9f0; --primary:#2563eb; --primary2:#1d4ed8;
+  --soft:#eff6ff; --danger:#dc2626; --success:#15803d;
+  --shadow:0 18px 50px rgba(31,41,55,.08); --radius:20px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+button,input{font:inherit}
+.container{width:min(1050px,calc(100% - 32px));margin:auto}
+.hero{padding:44px 0 24px}
+.hero-card{background:linear-gradient(135deg,#0f2f62,#2563eb);color:white;border-radius:28px;padding:34px;box-shadow:var(--shadow)}
+.eyebrow{font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;opacity:.8}
+h1{font-size:clamp(28px,5vw,44px);line-height:1.1;margin:10px 0 14px;max-width:850px}
+.hero p{max-width:780px;margin:0;color:#dbeafe}
+.notice{margin-top:22px;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,.12);font-size:14px}
+.progress-wrap{position:sticky;top:0;z-index:10;background:rgba(244,247,251,.94);backdrop-filter:blur(10px);padding:14px 0;border-bottom:1px solid rgba(228,233,240,.8)}
+.progress-head{display:flex;justify-content:space-between;gap:16px;align-items:center;font-size:14px;font-weight:700;margin-bottom:8px}
+.progress{height:9px;background:#dce4ef;border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;width:0;background:linear-gradient(90deg,#2563eb,#60a5fa);transition:.25s}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.step{border:0;background:transparent;color:#7b8494;font-weight:700;font-size:12px;padding:7px 4px;border-radius:10px;cursor:pointer}
+.step.active{background:#e8f0ff;color:var(--primary)}
+.step.done{color:var(--success)}
+main{padding:28px 0 70px}
+.block{display:none}
+.block.active{display:block}
+.block-title{margin-bottom:22px}
+.block-title h2{font-size:28px;margin:0 0 7px}
+.block-title p{color:var(--muted);margin:0}
+.question{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin:0 0 16px;box-shadow:0 5px 20px rgba(31,41,55,.035)}
+.q-title{font-weight:750;font-size:17px;margin:0 0 14px}
+.q-note{font-size:13px;color:var(--muted);margin:-6px 0 13px}
+.options{display:grid;gap:9px}
+.option{position:relative;display:flex;align-items:flex-start;gap:11px;padding:12px 13px;border:1px solid var(--line);border-radius:13px;cursor:pointer;transition:.15s;background:#fff}
+.option:hover{border-color:#a9c1ee;background:#f9fbff}
+.option:has(input:checked){border-color:#7da6f5;background:var(--soft)}
+.option input{margin-top:3px;accent-color:var(--primary);flex:0 0 auto}
+.option span{font-size:15px}
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.scale label{position:relative;text-align:center}
+.scale input{position:absolute;opacity:0}
+.scale span{display:flex;justify-content:center;align-items:center;height:50px;border:1px solid var(--line);border-radius:13px;font-weight:800;color:#667085;cursor:pointer}
+.scale input:checked+span{background:var(--primary);border-color:var(--primary);color:#fff}
+.scale-caption{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:7px}
+.error{color:var(--danger);font-size:13px;font-weight:650;margin-top:10px;display:none}
+.question.invalid{border-color:#f0a0a0}
+.question.invalid .error{display:block}
+.actions{display:flex;justify-content:space-between;gap:12px;margin-top:24px}
+.btn{border:0;border-radius:13px;padding:13px 20px;font-weight:800;cursor:pointer;transition:.15s}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary2)}
+.btn-secondary{background:#fff;color:var(--text);border:1px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.finish{display:none;background:#fff;border:1px solid var(--line);border-radius:24px;padding:34px;text-align:center;box-shadow:var(--shadow)}
+.finish.show{display:block}
+.finish-icon{width:64px;height:64px;margin:0 auto 16px;border-radius:50%;display:grid;place-items:center;background:#dcfce7;color:var(--success);font-size:30px;font-weight:900}
+.finish h2{margin:0 0 8px}
+.finish p{color:var(--muted);max-width:620px;margin:0 auto 20px}
+.finish-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:10px}
+.footer{text-align:center;color:#8a93a2;font-size:13px;padding:0 0 35px}
+@media(max-width:650px){
+  .container{width:min(100% - 20px,1050px)}
+  .hero{padding-top:18px}.hero-card{padding:24px;border-radius:22px}
+  .question{padding:17px}.q-title{font-size:16px}
+  .steps{gap:3px}.step{font-size:10px}
+  .actions{position:sticky;bottom:0;background:rgba(244,247,251,.94);padding:12px 0;z-index:8}
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="container">
+    <div class="hero-card">
+      <div class="eyebrow">Анкетирование · 1 курс</div>
+      <h1>Электроэнергетика и электротехника</h1>
+      <p>Анкета для первокурсников о адаптации, понимании специальности и потребности в едином путеводителе.</p>
+      <div class="notice">Заполнение занимает ориентировочно 8–12 минут. Если не указано иное, выберите один вариант ответа.</div>
+    </div>
+  </div>
+</header>
+
+<div class="progress-wrap">
+  <div class="container">
+    <div class="progress-head"><span id="progressText">Блок 1 из 4</span><span id="progressPercent">0%</span></div>
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="steps">
+      <button class="step active" data-step="0">1. Адаптация</button>
+      <button class="step" data-step="1">2. Понимание</button>
+      <button class="step" data-step="2">3. Содержание</button>
+      <button class="step" data-step="3">4. Проект</button>
+    </div>
+  </div>
+</div>
+
+<main class="container">
+<form id="survey">
+
+<section class="block active" data-block="0">
+  <div class="block-title"><h2>Блок 1. Адаптация первокурсника</h2><p>Первые вопросы помогают понять опыт адаптации и потребность в путеводителе.</p></div>
+
+  <div class="question" data-q="q1"><div class="q-title">1. Как давно вы начали обучение на 1 курсе?</div><div class="options">
+    <label class="option"><input type="radio" name="q1" value="Менее 2 недель"><span>Менее 2 недель.</span></label>
+    <label class="option"><input type="radio" name="q1" value="От 2 до 4 недель"><span>От 2 до 4 недель.</span></label>
+    <label class="option"><input type="radio" name="q1" value="От 1 до 2 месяцев"><span>От 1 до 2 месяцев.</span></label>
+    <label class="option"><input type="radio" name="q1" value="От 3 до 4 месяцев"><span>От 3 до 4 месяцев.</span></label>
+    <label class="option"><input type="radio" name="q1" value="Более 4 месяцев"><span>Более 4 месяцев.</span></label>
+  </div><div class="error">Выберите вариант.</div></div>
+
+  <div class="question" data-q="q2"><div class="q-title">2. На каком этапе учебного года вы сейчас находитесь?</div><div class="options">
+    <label class="option"><input type="radio" name="q2" value="Только прошли вводные занятия"><span>Только прошли вводные занятия.</span></label>
+    <label class="option"><input type="radio" name="q2" value="Сейчас изучаем первые темы по дисциплинам"><span>Сейчас изучаем первые темы по дисциплинам.</span></label>
+    <label class="option"><input type="radio" name="q2" value="Приближается первый зачёт или экзамен"><span>Приближается первый зачёт или экзамен.</span></label>
+    <label class="option"><input type="radio" name="q2" value="Идёт середина семестра"><span>Идёт середина семестра.</span></label>
+    <label class="option"><input type="radio" name="q2" value="Заканчивается семестр"><span>Заканчивается семестр.</span></label>
+    <label class="option"><input type="radio" name="q2" value="Сейчас каникулы"><span>Сейчас каникулы.</span></label>
+  </div><div class="error">Выберите вариант.</div></div>
+
+  <div class="question" data-q="q3"><div class="q-title">3. Насколько вам понятен формат обучения в вузе по сравнению со школой?</div><div class="scale-question"></div></div>
+  <div class="question" data-q="q4"><div class="q-title">4. Насколько вам ясно, какие действия нужно выполнить в начале семестра?</div></div>
+
+  <div class="question" data-q="q5"><div class="q-title">5. Как часто вы сталкивались с ситуацией, когда не знали, к кому обратиться по учебному вопросу?</div><div class="options">
+    <label class="option"><input type="radio" name="q5" value="Никогда"><span>Никогда.</span></label><label class="option"><input type="radio" name="q5" value="Редко"><span>Редко.</span></label><label class="option"><input type="radio" name="q5" value="Иногда"><span>Иногда.</span></label><label class="option"><input type="radio" name="q5" value="Часто"><span>Часто.</span></label><label class="option"><input type="radio" name="q5" value="Постоянно"><span>Постоянно.</span></label>
+  </div><div class="error">Выберите вариант.</div></div>
+
+  <div class="question" data-q="q6"><div class="q-title">6. Насколько вам нужен единый короткий путеводитель по специальности и первому курсу?</div></div>
+  <div class="question" data-q="q7"><div class="q-title">7. Какие трудности первого курса вы уже испытали или ожидаете?</div><div class="q-note">Выберите не более 3 вариантов.</div><div class="options multi" data-max="3">
+    <label class="option"><input type="checkbox" name="q7" value="Непонимание будущей профессии"><span>Непонимание будущей профессии.</span></label>
+    <label class="option"><input type="checkbox" name="q7" value="Непонимание связи предметов со специальностью"><span>Непонимание связи предметов со специальностью.</span></label>
+    <label class="option"><input type="checkbox" name="q7" value="Сложность навигации по учебному плану"><span>Сложность навигации по учебному плану.</span></label>
+    <label class="option"><input type="checkbox" name="q7" value="Трудности с лабораторными работами"><span>Трудности с лабораторными работами.</span></label>
+    <label class="option"><input type="checkbox" name="q7" value="Непонимание требований преподавателей"><span>Непонимание требований преподавателей.</span></label>
+    <label class="option"><input type="checkbox" name="q7" value="Трудности с самоорганизацией"><span>Трудности с самоорганизацией.</span></label>
+    <label class="option"><input type="checkbox" name="q7" value="Недостаточная ясность правил безопасности"><span>Недостаточная ясность правил безопасности.</span></label>
+    <label class="option"><input type="checkbox" name="q7" value="Тревога перед зачётами и экзаменами"><span>Тревога перед зачётами и экзаменами.</span></label>
+    <label class="option"><input type="checkbox" name="q7" value="Непонимание, как участвовать в науке и проектах"><span>Непонимание, как участвовать в науке и проектах.</span></label>
+    <label class="option"><input type="checkbox" name="q7" value="Существенных трудностей пока нет"><span>Существенных трудностей пока нет.</span></label>
+  </div><div class="error">Выберите от 1 до 3 вариантов.</div></div>
+
+  <div class="question" data-q="q8"><div class="q-title">8. Насколько вы уверены, что сможете самостоятельно организовать учебную нагрузку первого курса?</div></div>
+  <div class="question" data-q="q9"><div class="q-title">9. Насколько вам важно уже сейчас получить понятные шаги для успешного прохождения первого курса?</div></div>
+  <div class="question" data-q="q10"><div class="q-title">10. Насколько единый путеводитель был бы для вас полезнее, чем поиск информации по разным источникам?</div></div>
+
+  <div class="actions"><button type="button" class="btn btn-primary next">Продолжить →</button></div>
+</section>
+
+<section class="block" data-block="1">
+  <div class="block-title"><h2>Блок 2. Понимание специальности</h2><p>Диагностика непонимания специальности и учебной тревожности.</p></div>
+
+  <div class="question" data-q="q11"><div class="q-title">11. Что сейчас для вас наиболее непонятно в специальности «Электроэнергетика и электротехника»?</div><div class="q-note">Выберите не более 3 вариантов.</div><div class="options multi" data-max="3">
+    <label class="option"><input type="checkbox" name="q11" value="Чем именно занимается выпускник этой специальности"><span>Чем именно занимается выпускник этой специальности.</span></label>
+    <label class="option"><input type="checkbox" name="q11" value="Где можно работать после обучения"><span>Где можно работать после обучения.</span></label>
+    <label class="option"><input type="checkbox" name="q11" value="Зачем нужны фундаментальные предметы"><span>Зачем нужны фундаментальные предметы.</span></label>
+    <label class="option"><input type="checkbox" name="q11" value="Как устроен учебный план"><span>Как устроен учебный план.</span></label>
+    <label class="option"><input type="checkbox" name="q11" value="В чём разница между электроэнергетикой и электротехникой"><span>В чём разница между электроэнергетикой и электротехникой.</span></label>
+    <label class="option"><input type="checkbox" name="q11" value="Какие дисциплины являются ключевыми"><span>Какие дисциплины являются ключевыми.</span></label>
+    <label class="option"><input type="checkbox" name="q11" value="Как проходят лабораторные и практические занятия"><span>Как проходят лабораторные и практические занятия.</span></label>
+    <label class="option"><input type="checkbox" name="q11" value="Какие требования существуют по технике безопасности"><span>Какие требования существуют по технике безопасности.</span></label>
+    <label class="option"><input type="checkbox" name="q11" value="Как можно участвовать в науке, проектах или студенческой жизни кафедры"><span>Как можно участвовать в науке, проектах или студенческой жизни кафедры.</span></label>
+    <label class="option"><input type="checkbox" name="q11" value="Сейчас у меня нет существенных непониманий"><span>Сейчас у меня нет существенных непониманий.</span></label>
+  </div><div class="error">Выберите от 1 до 3 вариантов.</div></div>
+
+  <div class="question" data-q="q12"><div class="q-title">12. Насколько чётко вы можете своими словами объяснить, кто такой инженер-энергетик?</div></div>
+  <div class="question" data-q="q13"><div class="q-title">13. Насколько хорошо вы понимаете разницу между понятиями «электроэнергетика» и «электротехника»?</div></div>
+  <div class="question" data-q="q14"><div class="q-title">14. Насколько вы понимаете, как математика, физика и информатика применяются в электроэнергетике?</div></div>
+
+  <div class="question" data-q="q15"><div class="q-title">15. Как часто у вас возникает вопрос: «Зачем мне это учить?»</div><div class="options">
+    <label class="option"><input type="radio" name="q15" value="Никогда"><span>Никогда.</span></label><label class="option"><input type="radio" name="q15" value="Редко"><span>Редко.</span></label><label class="option"><input type="radio" name="q15" value="Иногда"><span>Иногда.</span></label><label class="option"><input type="radio" name="q15" value="Часто"><span>Часто.</span></label><label class="option"><input type="radio" name="q15" value="Постоянно"><span>Постоянно.</span></label>
+  </div><div class="error">Выберите вариант.</div></div>
+
+  <div class="question" data-q="q16"><div class="q-title">16. Насколько перечень дисциплин, лабораторных работ, зачётов и экзаменов вызывает у вас ощущение перегрузки или тревоги?</div></div>
+
+  <div class="question" data-q="q17"><div class="q-title">17. Какой источник информации о специальности вы считаете наиболее понятным для себя сейчас?</div><div class="options">
+    <label class="option"><input type="radio" name="q17" value="Преподаватель кафедры"><span>Преподаватель кафедры.</span></label><label class="option"><input type="radio" name="q17" value="Куратор или старшекурсник"><span>Куратор или старшекурсник.</span></label><label class="option"><input type="radio" name="q17" value="Официальный сайт вуза или кафедры"><span>Официальный сайт вуза или кафедры.</span></label><label class="option"><input type="radio" name="q17" value="Презентация или день открытых дверей"><span>Презентация или день открытых дверей.</span></label><label class="option"><input type="radio" name="q17" value="Короткое видео"><span>Короткое видео.</span></label><label class="option"><input type="radio" name="q17" value="Инфографика или схема"><span>Инфографика или схема.</span></label><label class="option"><input type="radio" name="q17" value="Текстовый путеводитель"><span>Текстовый путеводитель.</span></label><label class="option"><input type="radio" name="q17" value="Раздел часто задаваемых вопросов"><span>Раздел часто задаваемых вопросов.</span></label><label class="option"><input type="radio" name="q17" value="Личный опыт общения со студентами"><span>Личный опыт общения со студентами.</span></label><label class="option"><input type="radio" name="q17" value="Затрудняюсь ответить"><span>Затрудняюсь ответить.</span></label>
+  </div><div class="error">Выберите вариант.</div></div>
+
+  <div class="question" data-q="q18"><div class="q-title">18. Чего чаще всего не хватает в существующих объяснениях специальности для первокурсника?</div><div class="q-note">Выберите не более 3 вариантов.</div><div class="options multi" data-max="3">
+    <label class="option"><input type="checkbox" name="q18" value="Простых слов без сложных терминов"><span>Простых слов без сложных терминов.</span></label><label class="option"><input type="checkbox" name="q18" value="Примеров из реальной профессии"><span>Примеров из реальной профессии.</span></label><label class="option"><input type="checkbox" name="q18" value="Понятной структуры обучения по курсам и семестрам"><span>Понятной структуры обучения по курсам и семестрам.</span></label><label class="option"><input type="checkbox" name="q18" value="Объяснения связи между дисциплинами"><span>Объяснения связи между дисциплинами.</span></label><label class="option"><input type="checkbox" name="q18" value="Информации о технике безопасности"><span>Информации о технике безопасности.</span></label><label class="option"><input type="checkbox" name="q18" value="Информации о практике и трудоустройстве"><span>Информации о практике и трудоустройстве.</span></label><label class="option"><input type="checkbox" name="q18" value="Советов по эффективной учёбе"><span>Советов по эффективной учёбе.</span></label><label class="option"><input type="checkbox" name="q18" value="Ответов на частые вопросы первокурсников"><span>Ответов на частые вопросы первокурсников.</span></label><label class="option"><input type="checkbox" name="q18" value="Визуальных схем, карт и инфографики"><span>Визуальных схем, карт и инфографики.</span></label><label class="option"><input type="checkbox" name="q18" value="Ничего существенного не не хватает"><span>Ничего существенного не не хватает.</span></label>
+  </div><div class="error">Выберите от 1 до 3 вариантов.</div></div>
+
+  <div class="question" data-q="q19"><div class="q-title">19. Насколько важно для вас уже на первом курсе понимать, кем вы станете после обучения и какие задачи будете решать?</div></div>
+  <div class="question" data-q="q20"><div class="q-title">20. Насколько вы уверены, что сможете успешно учиться на направлении при текущем уровне понимания специальности?</div></div>
+
+  <div class="actions"><button type="button" class="btn btn-secondary prev">← Назад</button><button type="button" class="btn btn-primary next">Продолжить →</button></div>
+</section>
+
+<section class="block" data-block="2">
+  <div class="block-title"><h2>Блок 3. Содержание путеводителя</h2><p>Определяем приоритетные темы и форматы будущего материала.</p></div>
+
+  <div class="question" data-q="q21"><div class="q-title">21. Какие разделы путеводителя для первокурсника были бы для вас наиболее важны?</div><div class="q-note">Выберите не более 5 вариантов.</div><div class="options multi" data-max="5">
+    <label class="option"><input type="checkbox" name="q21" value="Кто такой инженер-энергетик"><span>Кто такой инженер-энергетик.</span></label><label class="option"><input type="checkbox" name="q21" value="Чем занимается выпускник специальности"><span>Чем занимается выпускник специальности.</span></label><label class="option"><input type="checkbox" name="q21" value="Структура учебного плана"><span>Структура учебного плана.</span></label><label class="option"><input type="checkbox" name="q21" value="Ключевые дисциплины и их смысл"><span>Ключевые дисциплины и их смысл.</span></label><label class="option"><input type="checkbox" name="q21" value="Связь математики, физики, информатики и электроэнергетики"><span>Связь математики, физики, информатики и электроэнергетики.</span></label><label class="option"><input type="checkbox" name="q21" value="Лабораторные и практические занятия"><span>Лабораторные и практические занятия.</span></label><label class="option"><input type="checkbox" name="q21" value="Техника безопасности и электробезопасность"><span>Техника безопасности и электробезопасность.</span></label><label class="option"><input type="checkbox" name="q21" value="Научная, проектная и внеучебная жизнь кафедры"><span>Научная, проектная и внеучебная жизнь кафедры.</span></label><label class="option"><input type="checkbox" name="q21" value="Практика, будущие работодатели и карьерные траектории"><span>Практика, будущие работодатели и карьерные траектории.</span></label><label class="option"><input type="checkbox" name="q21" value="Советы по учёбе и самоорганизации"><span>Советы по учёбе и самоорганизации.</span></label><label class="option"><input type="checkbox" name="q21" value="Навигация по кафедре, вузу и контактам"><span>Навигация по кафедре, вузу и контактам.</span></label><label class="option"><input type="checkbox" name="q21" value="Частые вопросы первокурсников"><span>Частые вопросы первокурсников.</span></label>
+  </div><div class="error">Выберите от 1 до 5 вариантов.</div></div>
+
+  <div class="question" data-q="q22"><div class="q-title">22. Насколько полезен был бы раздел с примерами реальных задач инженера-энергетика: проектирование, эксплуатация, защита, автоматизация, энергоснабжение?</div></div>
+  <div class="question" data-q="q23"><div class="q-title">23. Насколько нужен разбор учебного плана «по курсам и семестрам»: что изучаем, зачем и в какой последовательности?</div></div>
+  <div class="question" data-q="q24"><div class="q-title">24. Насколько важны простые объяснения ключевых дисциплин: теоретические основы электротехники, электрические машины, релейная защита, электрические сети, электроснабжение, возобновляемая энергетика?</div></div>
+  <div class="question" data-q="q25"><div class="q-title">25. Насколько важен отдельный блок о технике безопасности, электробезопасности и правилах работы в учебных лабораториях?</div></div>
+  <div class="question" data-q="q26"><div class="q-title">26. Насколько полезны были бы советы по организации учёбы: как готовиться к лекциям, семинарам, лабораторным, экзаменам и первой сессии?</div></div>
+  <div class="question" data-q="q27"><div class="q-title">27. Хотели бы вы видеть в путеводителе примеры студенческих проектов, научных кружков, конференций, олимпиад и инженерных соревнований?</div></div>
+  <div class="question" data-q="q28"><div class="q-title">28. Насколько важна информация о местах практики, возможных работодателях и карьерных траекториях выпускников?</div></div>
+  <div class="question" data-q="q29"><div class="q-title">29. Насколько полезен был бы раздел с ответами на частые вопросы первокурсников?</div></div>
+
+  <div class="question" data-q="q30"><div class="q-title">30. Какие форматы материалов внутри путеводителя были бы вам наиболее полезны?</div><div class="q-note">Выберите не более 3 вариантов.</div><div class="options multi" data-max="3">
+    <label class="option"><input type="checkbox" name="q30" value="Пошаговая инструкция"><span>Пошаговая инструкция.</span></label><label class="option"><input type="checkbox" name="q30" value="Карта специальности"><span>Карта специальности.</span></label><label class="option"><input type="checkbox" name="q30" value="Схема связей между дисциплинами"><span>Схема связей между дисциплинами.</span></label><label class="option"><input type="checkbox" name="q30" value="Глоссарий терминов"><span>Глоссарий терминов.</span></label><label class="option"><input type="checkbox" name="q30" value="Чек-листы"><span>Чек-листы.</span></label><label class="option"><input type="checkbox" name="q30" value="Короткие кейсы из практики"><span>Короткие кейсы из практики.</span></label><label class="option"><input type="checkbox" name="q30" value="FAQ"><span>FAQ.</span></label><label class="option"><input type="checkbox" name="q30" value="Инфографика"><span>Инфографика.</span></label><label class="option"><input type="checkbox" name="q30" value="Короткие видео"><span>Короткие видео.</span></label><label class="option"><input type="checkbox" name="q30" value="Тест для самопроверки"><span>Тест для самопроверки.</span></label>
+  </div><div class="error">Выберите от 1 до 3 вариантов.</div></div>
+
+  <div class="actions"><button type="button" class="btn btn-secondary prev">← Назад</button><button type="button" class="btn btn-primary next">Продолжить →</button></div>
+</section>
+
+<section class="block" data-block="3">
+  <div class="block-title"><h2>Блок 4. Целесообразность проекта</h2><p>Проверяем формат, ожидаемую пользу и отношение к первой версии путеводителя.</p></div>
+
+  <div class="question" data-q="q31"><div class="q-title">31. Какой объём первичного ознакомления с путеводителем для вас наиболее приемлем?</div><div class="options">
+    <label class="option"><input type="radio" name="q31" value="До 5 минут"><span>До 5 минут.</span></label><label class="option"><input type="radio" name="q31" value="От 5 до 10 минут"><span>От 5 до 10 минут.</span></label><label class="option"><input type="radio" name="q31" value="От 10 до 20 минут"><span>От 10 до 20 минут.</span></label><label class="option"><input type="radio" name="q31" value="От 20 до 30 минут"><span>От 20 до 30 минут.</span></label><label class="option"><input type="radio" name="q31" value="Более 30 минут"><span>Более 30 минут.</span></label><label class="option"><input type="radio" name="q31" value="Готов читать по частям по мере необходимости"><span>Готов читать по частям по мере необходимости.</span></label>
+  </div><div class="error">Выберите вариант.</div></div>
+
+  <div class="question" data-q="q32"><div class="q-title">32. Какие разделы должны войти в минимальную версию путеводителя?</div><div class="q-note">Выберите не более 3 вариантов.</div><div class="options multi" data-max="3">
+    <label class="option"><input type="checkbox" name="q32" value="Кто такой инженер-энергетик"><span>Кто такой инженер-энергетик.</span></label><label class="option"><input type="checkbox" name="q32" value="Карта учебного плана"><span>Карта учебного плана.</span></label><label class="option"><input type="checkbox" name="q32" value="Пояснение ключевых дисциплин"><span>Пояснение ключевых дисциплин.</span></label><label class="option"><input type="checkbox" name="q32" value="Техника безопасности и электробезопасность"><span>Техника безопасности и электробезопасность.</span></label><label class="option"><input type="checkbox" name="q32" value="Советы по подготовке к первой сессии"><span>Советы по подготовке к первой сессии.</span></label><label class="option"><input type="checkbox" name="q32" value="Возможности науки, проектов и студенческой жизни"><span>Возможности науки, проектов и студенческой жизни.</span></label><label class="option"><input type="checkbox" name="q32" value="Контакты и навигация по кафедре"><span>Контакты и навигация по кафедре.</span></label><label class="option"><input type="checkbox" name="q32" value="Частые вопросы первокурсников"><span>Частые вопросы первокурсников.</span></label>
+  </div><div class="error">Выберите от 1 до 3 вариантов.</div></div>
+
+  <div class="question" data-q="q33"><div class="q-title">33. Насколько важно, чтобы путеводитель содержал конкретные шаги, а не только общее описание специальности?</div></div>
+  <div class="question" data-q="q34"><div class="q-title">34. Насколько важно, чтобы путеводитель был доступен онлайн и легко обновлялся при изменениях в учебном процессе?</div></div>
+
+  <div class="question" data-q="q35"><div class="q-title">35. Что будет главным признаком полезности путеводителя?</div><div class="q-note">Выберите не более 3 вариантов.</div><div class="options multi" data-max="3">
+    <label class="option"><input type="checkbox" name="q35" value="Стало понятнее, кем я смогу работать"><span>Стало понятнее, кем я смогу работать.</span></label><label class="option"><input type="checkbox" name="q35" value="Стало понятнее, зачем нужны учебные дисциплины"><span>Стало понятнее, зачем нужны учебные дисциплины.</span></label><label class="option"><input type="checkbox" name="q35" value="Снизилась тревога перед первым курсом"><span>Снизилась тревога перед первым курсом.</span></label><label class="option"><input type="checkbox" name="q35" value="Стало понятнее, как готовиться к зачётам и экзаменам"><span>Стало понятнее, как готовиться к зачётам и экзаменам.</span></label><label class="option"><input type="checkbox" name="q35" value="Стало понятнее, как работать в лабораториях безопасно"><span>Стало понятнее, как работать в лабораториях безопасно.</span></label><label class="option"><input type="checkbox" name="q35" value="Удалось быстрее найти нужные контакты и ресурсы"><span>Удалось быстрее найти нужные контакты и ресурсы.</span></label><label class="option"><input type="checkbox" name="q35" value="Появилось понимание, куда можно пойти в науку или проекты"><span>Появилось понимание, куда можно пойти в науку или проекты.</span></label>
+  </div><div class="error">Выберите от 1 до 3 вариантов.</div></div>
+
+  <div class="question" data-q="q36"><div class="q-title">36. Насколько вероятно, что вы будете использовать путеводитель вместо поиска информации в чатах, на сайте и у однокурсников?</div></div>
+
+  <div class="question" data-q="q37"><div class="q-title">37. Какой риск создания путеводителя вы считаете наиболее вероятным?</div><div class="q-note">Выберите не более 2 вариантов.</div><div class="options multi" data-max="2">
+    <label class="option"><input type="checkbox" name="q37" value="Документ быстро устареет"><span>Документ быстро устареет.</span></label><label class="option"><input type="checkbox" name="q37" value="Им будут игнорировать"><span>Им будут игнорировать.</span></label><label class="option"><input type="checkbox" name="q37" value="Он продублирует уже существующую информацию"><span>Он продублирует уже существующую информацию.</span></label><label class="option"><input type="checkbox" name="q37" value="Он окажется слишком общим и непонятным"><span>Он окажется слишком общим и непонятным.</span></label><label class="option"><input type="checkbox" name="q37" value="Формат будет неудобным для использования"><span>Формат будет неудобным для использования.</span></label><label class="option"><input type="checkbox" name="q37" value="Он станет формальностью без реальной пользы"><span>Он станет формальностью без реальной пользы.</span></label><label class="option"><input type="checkbox" name="q37" value="Существенных рисков нет"><span>Существенных рисков нет.</span></label>
+  </div><div class="error">Выберите от 1 до 2 вариантов.</div></div>
+
+  <div class="question" data-q="q38"><div class="q-title">38. Готовы ли вы оценить первую версию путеводителя после прочтения?</div><div class="options">
+    <label class="option"><input type="radio" name="q38" value="Да, готов обязательно"><span>Да, готов обязательно.</span></label><label class="option"><input type="radio" name="q38" value="Да, если это займёт не более 10 минут"><span>Да, если это займёт не более 10 минут.</span></label><label class="option"><input type="radio" name="q38" value="Готов только если это будет полезно для учёбы"><span>Готов только если это будет полезно для учёбы.</span></label><label class="option"><input type="radio" name="q38" value="Готов только при условии, что это будет засчитано как учебная активность"><span>Готов только при условии, что это будет засчитано как учебная активность.</span></label><label class="option"><input type="radio" name="q38" value="Нет, не готов"><span>Нет, не готов.</span></label>
+  </div><div class="error">Выберите вариант.</div></div>
+
+  <div class="question" data-q="q39"><div class="q-title">39. Насколько вы согласны, что путеводитель должен быть ориентирован именно на первокурсников, а не на все курсы сразу?</div></div>
+
+  <div class="question" data-q="q40"><div class="q-title">40. Какой вывод о целесообразности проекта был бы для вас наиболее уместным по итогам анкетирования?</div><div class="options">
+    <label class="option"><input type="radio" name="q40" value="Проект нужен, и путеводитель следует разрабатывать сразу"><span>Проект нужен, и путеводитель следует разрабатывать сразу.</span></label>
+    <label class="option"><input type="radio" name="q40" value="Проект нужен, но сначала стоит сделать короткую пилотную версию"><span>Проект нужен, но сначала стоит сделать короткую пилотную версию.</span></label>
+    <label class="option"><input type="radio" name="q40" value="Проект возможен, если подтвердится потребность большинства первокурсников"><span>Проект возможен, если подтвердится потребность большинства первокурсников.</span></label>
+    <label class="option"><input type="radio" name="q40" value="Проект не нужен, достаточно существующих источников информации"><span>Проект не нужен, достаточно существующих источников информации.</span></label>
+    <label class="option"><input type="radio" name="q40" value="Затрудняюсь ответить"><span>Затрудняюсь ответить.</span></label>
+  </div><div class="error">Выберите вариант.</div></div>
+
+  <div class="actions"><button type="button" class="btn btn-secondary prev">← Назад</button><button type="submit" class="btn btn-primary">Завершить анкету ✓</button></div>
+</section>
+
+</form>
+
+<section class="finish" id="finish">
+  <div class="finish-icon">✓</div>
+  <h2>Спасибо! Анкета заполнена.</h2>
+  <p>Ответы сохранены в этом браузере. Вы можете скачать их в формате JSON для последующей обработки.</p>
+  <div class="finish-actions">
+    <button class="btn btn-primary" id="download">Скачать ответы JSON</button>
+    <button class="btn btn-secondary" id="restart">Заполнить заново</button>
+  </div>
+</section>
+</main>
+
+<div class="container footer">Анкета для первокурсников направления «Электроэнергетика и электротехника»</div>
+
+<script>
+const blocks=[...document.querySelectorAll('.block')];
+const steps=[...document.querySelectorAll('.step')];
+const form=document.getElementById('survey');
+let current=0;
+const totalQuestions=40;
+
+function makeScale(q){
+  const el=document.querySelector(`[data-q="${q}"]`);
+  if(!el || el.querySelector('.scale')) return;
+  const wrap=document.createElement('div'); wrap.className='scale';
+  for(let i=1;i<=5;i++){
+    const label=document.createElement('label');
+    label.innerHTML=`<input type="radio" name="${q}" value="${i}"><span>${i}</span>`;
+    wrap.appendChild(label);
+  }
+  const cap=document.createElement('div'); cap.className='scale-caption';
+  cap.innerHTML='<span>1 — совсем не согласен / не важно / не понимаю</span><span>5 — полностью согласен / очень важно / понимаю</span>';
+  el.append(wrap,cap);
+  const err=document.createElement('div'); err.className='error'; err.textContent='Выберите оценку от 1 до 5.';
+  el.appendChild(err);
+}
+['q3','q4','q6','q8','q9','q10','q12','q13','q14','q16','q19','q20','q22','q23','q24','q25','q26','q27','q28','q29','q33','q34','q36','q39'].forEach(makeScale);
+
+function showBlock(n){
+  current=n;
+  blocks.forEach((b,i)=>b.classList.toggle('active',i===n));
+  steps.forEach((s,i)=>{s.classList.toggle('active',i===n);s.classList.toggle('done',i<n)});
+  const percent=Math.round(((n)/4)*100);
+  document.getElementById('progressBar').style.width=percent+'%';
+  document.getElementById('progressPercent').textContent=percent+'%';
+  document.getElementById('progressText').textContent=`Блок ${n+1} из 4`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function validateBlock(n){
+  let ok=true;
+  blocks[n].querySelectorAll('.question').forEach(q=>{
+    q.classList.remove('invalid');
+    const group=q.querySelector('.options');
+    const inputs=q.querySelectorAll('input');
+    if(!inputs.length) return;
+    const checked=[...inputs].filter(x=>x.checked);
+    const multi=group && group.classList.contains('multi');
+    if(multi){
+      const max=Number(group.dataset.max);
+      if(checked.length<1 || checked.length>max){q.classList.add('invalid');ok=false;}
+    }else if(checked.length!==1){q.classList.add('invalid');ok=false;}
+  });
+  if(!ok){
+    const first=blocks[n].querySelector('.question.invalid');
+    first?.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  return ok;
+}
+form.addEventListener('change',e=>{
+  const input=e.target;
+  if(input.matches('input[type=checkbox]')){
+    const group=input.closest('.multi');
+    if(group){
+      const max=Number(group.dataset.max);
+      const checked=group.querySelectorAll('input:checked');
+      if(checked.length>max){input.checked=false;}
+    }
+  }
+  const q=input.closest('.question');
+  if(q) q.classList.remove('invalid');
+  saveDraft();
+});
+document.querySelectorAll('.next').forEach(b=>b.addEventListener('click',()=>{
+  if(validateBlock(current)) showBlock(current+1);
+}));
+document.querySelectorAll('.prev').forEach(b=>b.addEventListener('click',()=>showBlock(current-1)));
+steps.forEach(s=>s.addEventListener('click',()=>{
+  const target=Number(s.dataset.step);
+  if(target<=current || [...Array(target-current)].every((_,i)=>validateBlock(current+i))) showBlock(target);
+}));
+function collect(){
+  const data={};
+  for(let i=1;i<=40;i++){
+    const inputs=[...form.querySelectorAll(`[name="q${i}"]`)];
+    if(inputs[0]?.type==='checkbox') data[`q${i}`]=inputs.filter(x=>x.checked).map(x=>x.value);
+    else data[`q${i}`]=inputs.find(x=>x.checked)?.value ?? '';
+  }
+  data.meta={submittedAt:new Date().toISOString(),survey:'Анкета для первокурсников направления «Электроэнергетика и электротехника»'};
+  return data;
+}
+function saveDraft(){localStorage.setItem('ee-survey-draft',JSON.stringify(collect()));}
+function restore(){
+  try{
+    const d=JSON.parse(localStorage.getItem('ee-survey-draft')||'{}');
+    for(const [key,val] of Object.entries(d)){
+      if(key==='meta') continue;
+      const inputs=[...form.querySelectorAll(`[name="${key}"]`)];
+      if(!inputs.length) continue;
+      if(Array.isArray(val)) inputs.forEach(i=>i.checked=val.includes(i.value));
+      else inputs.forEach(i=>{i.checked=i.value===val});
+    }
+  }catch(e){}
+}
+form.addEventListener('submit',e=>{
+  e.preventDefault();
+  if(!validateBlock(3)) return;
+  const data=collect();
+  localStorage.setItem('ee-survey-result',JSON.stringify(data));
+  form.style.display='none';
+  document.querySelector('.progress-wrap').style.display='none';
+  document.getElementById('finish').classList.add('show');
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+document.getElementById('download').addEventListener('click',()=>{
+  const data=JSON.parse(localStorage.getItem('ee-survey-result')||'{}');
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='anketa-elektroenergetika-otvety.json';a.click();URL.revokeObjectURL(a.href);
+});
+document.getElementById('restart').addEventListener('click',()=>{
+  localStorage.removeItem('ee-survey-draft');localStorage.removeItem('ee-survey-result');location.reload();
+});
+restore();
+showBlock(0);
+</script>
+</body>
+</html>
